@@ -10,7 +10,7 @@ format:
 natbiboptions: numbers
 # EDIT AT YOUR OWN PERIL #
 
-title: Junior Seminar Research Report Title
+title: Pricing Simulation for Supply, Demand, and Elasticity
 
 firstreader: Professor Gregory M. Kapfhammer
 secondreader: Student Second Reader
