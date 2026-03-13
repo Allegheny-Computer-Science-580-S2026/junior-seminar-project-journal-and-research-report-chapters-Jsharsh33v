@@ -16,7 +16,7 @@ On the industry side, the practical motivation is equally urgent. Unplanned down
 
 ## Current State of the Art
 
-The academic literature on maintenance optimization spans several decades and encompasses a wide range of modeling approaches, each addressing different aspects of the scheduling problem with varying degrees of realism and computational feasibility. Understanding where these approaches succeed and where they fall short is essential to motivating the design decisions behind MaintAlign and to appreciating why the specific combination of techniques that MaintAlign employs represents a meaningful advance over the existing landscape.
+The academic literature on maintenance optimization spans several decades and encompasses a wide range of modeling approaches, each addressing different aspects of the scheduling problem with varying degrees of realism and computational feasibility. Understanding where these approaches succeed, and where they fall short is essential to motivating the design decisions behind MaintAlign and to appreciating why the specific combination of techniques that MaintAlign employs represents a meaningful advance over the existing landscape.
 
 # Age-Replacement and Block-Replacement Policies
 
