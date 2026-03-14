@@ -7,7 +7,7 @@ description: "What is your research idea?"
 
 ![Research planning](../thumbnail.jpg)
 
-## What is your research idea?
+## What was your research idea?
 
 My research idea is to build a pricing simulation that shows how prices change over time based on supply, demand, and price elasticity. The main problem I want to address is that many economics models are taught using static graphs, which do not clearly show how prices adjust step by step in real markets.
 
@@ -21,3 +21,13 @@ Through this project, I hope to create an educational tool that helps students b
 
 One relevant published research paper in this area is Marshall’s work on supply and demand, which provides foundational ideas about market equilibrium and price adjustment.
 
+
+## What is your research idea now?
+
+As I thought more deeply about the pricing simulation, I realized it felt more like building a teaching app than doing actual research with a meaningful contribution. I started reconsidering what problem genuinely interests me and what would constitute a real research contribution rather than just an educational tool.
+
+My current research idea is to build MaintAlign, a preventive maintenance scheduling optimization tool for production systems with resource constraints and production chain dependencies. The main problem I want to address is that most maintenance scheduling approaches use either simple time-based intervals or purely reactive strategies, neither of which accounts for production chain dependencies or limited resources. In real manufacturing, if Machine A fails, it might halt everything downstream, and you can't maintain all machines at once because you have limited technicians and downtime windows.
+
+My approach uses Weibull failure distribution models combined with constraint programming (OR-Tools CP-SAT solver) to find optimal maintenance schedules. I treat maintenance decisions as a 0/1 knapsack optimization problem where I'm balancing cost, failure risk, and resource constraints across an entire production chain. I'm building this in Python and will validate the approach against baseline strategies using synthetic data, with planned future work on real manufacturing data. The goal is to show that accounting for production dependencies and constraints produces significantly better outcomes than simple approaches.
+
+Through this project, I hope to demonstrate that constraint programming can solve real production scheduling problems and provide manufacturers with a practical tool that improves maintenance decisions. Relevant research includes Weibull failure modeling (Barlow & Hunter, Kijima), constraint programming optimization theory, and production systems management literature.
