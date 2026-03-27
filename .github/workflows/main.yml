@@ -42,6 +42,7 @@ jobs:
         if: always()
       - name: Build with Quarto
         run: |
+          quarto install chromium
           quarto render
         if: always()
       - name: Upload artifact
