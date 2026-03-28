@@ -5,8 +5,7 @@ format:
     toc: true
     citeproc: true
     csl: journal-of-the-acm.csl
-  allegheny-cis-pdf:
-    mermaid-format: png
+  allegheny-cis-pdf: default
 
 natbiboptions: numbers
 # EDIT AT YOUR OWN PERIL #
