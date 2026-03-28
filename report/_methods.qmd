@@ -78,7 +78,7 @@ The opportunistic grouping component deserves extra explanation because it is on
 
 @fig-runtime shows the complete sequence of steps from user input through optimization to validated output.
 
-![MaintAlign system architecture showing the data flow from user inputs through optimization and validation to final output.](images/dynamic.png){#fig-architecture width=80%}
+![MaintAlign system architecture showing the data flow from user inputs through optimization and validation to final output.](images/dynamic.png){#fig-runtime width=80%}
 
 If the solver cannot find a feasible solution — for example, if the downtime windows are too narrow to accommodate all required maintenance — MaintAlign reports the infeasibility and suggests which constraints might need to be relaxed. This prevents the system from silently producing a bad schedule.
 
