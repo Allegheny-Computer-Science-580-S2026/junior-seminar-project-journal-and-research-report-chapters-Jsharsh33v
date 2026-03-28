@@ -64,26 +64,13 @@ These cost tables are the bridge between the statistical failure models and the 
 
 Once the cost tables are built, MaintAlign formulates a constraint programming model and hands it to the CP-SAT solver. This section explains what the solver is actually optimizing: the decision variables it controls, the constraints it must respect, and the objective it tries to minimize. @tbl-cpsat-formulation summarizes the formulation.
 
-+--------------------------------------+-----------------------------------------------------------------------------------------+
-| Component                            | Description                                                                             |
-+======================================+=========================================================================================+
-| **Decision Variables**               | For each equipment unit $i$, an integer variable $\tau_i$ representing the maintenance  |
-|                                      | interval (in discrete time periods). The solver chooses the value of each $\tau_i$.     |
-+--------------------------------------+-----------------------------------------------------------------------------------------+
-| **Constraint: Planning Horizon**     | Every maintenance interval must fall within the planning horizon:                       |
-|                                      | $1 \leq \tau_i \leq T$ for all equipment $i$, where $T$ is the total number of         |
-|                                      | time periods.                                                                           |
-+--------------------------------------+-----------------------------------------------------------------------------------------+
-| **Constraint: Production**           | If machine $j$ depends on machine $i$ (i.e., $i$ is upstream of $j$), then $j$         |
-| **Dependencies**                     | cannot be scheduled for maintenance during a period when $i$ is expected to be          |
-|                                      | running and feeding it work.                                                            |
-+--------------------------------------+-----------------------------------------------------------------------------------------+
-| **Constraint: Downtime Windows**     | Maintenance can only be scheduled during allowed downtime windows — periods when the    |
-|                                      | production line can tolerate a machine being offline.                                   |
-+--------------------------------------+-----------------------------------------------------------------------------------------+
-| **Objective: Minimize Total Cost**   | Minimize $\sum_{i} E[\text{Cost}_i(\tau_i)] - \text{GroupingSavings}$, where the        |
-|                                      | grouping savings reward scheduling nearby machines together to share setup costs.        |
-+--------------------------------------+-----------------------------------------------------------------------------------------+
+| Component | Description |
+|:----------|:------------|
+| **Decision Variables** | For each equipment unit $i$, an integer variable $\tau_i$ representing the maintenance interval (in discrete time periods). The solver chooses the value of each $\tau_i$. |
+| **Constraint: Planning Horizon** | Every maintenance interval must fall within the planning horizon: $1 \leq \tau_i \leq T$ for all equipment $i$, where $T$ is the total number of time periods. |
+| **Constraint: Production Dependencies** | If machine $j$ depends on machine $i$ (i.e., $i$ is upstream of $j$), then $j$ cannot be scheduled for maintenance during a period when $i$ is expected to be running and feeding it work. |
+| **Constraint: Downtime Windows** | Maintenance can only be scheduled during allowed downtime windows — periods when the production line can tolerate a machine being offline. |
+| **Objective: Minimize Total Cost** | Minimize $\sum_{i} E[\text{Cost}_i(\tau_i)] - \text{GroupingSavings}$, where the grouping savings reward scheduling nearby machines together to share setup costs. |
 
 : CP-SAT constraint model formulation for MaintAlign. {#tbl-cpsat-formulation}
 
