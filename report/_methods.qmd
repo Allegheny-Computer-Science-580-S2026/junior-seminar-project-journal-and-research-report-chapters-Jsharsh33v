@@ -31,7 +31,7 @@ This separation means each component is testable on its own. The failure modelin
 
 MaintAlign is written entirely in Python 3.11, chosen for its strong library support in both scientific computing and constraint programming.
 
-The constraint solver is Google OR-Tools CP-SAT [@GoogleORTools], a constraint programming library developed by Google Research. CP-SAT is designed for combinatorial optimization problems — exactly the kind of problem that maintenance scheduling represents. It was chosen over alternatives like Gurobi or CPLEX because it is open-source, well-documented, and handles the integer decision variables that MaintAlign uses to represent discrete maintenance intervals.
+The constraint solver is Google OR-Tools CP-SAT [@GoogleORTools], a constraint programming library developed by Google Research. CP-SAT is designed for combinatorial optimization problems — exactly the kind of problem that maintenance scheduling represents. It was chosen over alternatives like Gurobi or CPLEX because it is open-source, well-documented and handles the integer decision variables that MaintAlign uses to represent discrete maintenance intervals.
 
 Failure probability calculations use NumPy and SciPy [@SciPy2020]. Specifically, `scipy.stats.weibull_min` provides the Weibull cumulative distribution function, and NumPy handles array operations for building cost tables across all equipment units. The Streamlit framework provides the interactive dashboard where users configure equipment, run the optimizer, and view results.
 
