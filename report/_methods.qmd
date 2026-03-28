@@ -8,22 +8,7 @@ MaintAlign is a preventive maintenance scheduling optimizer. It takes in a set o
 
 At its core, the system has four layers. The input layer collects equipment parameters, production chain dependencies, and planning settings from the user. The core engine uses those inputs to model failure probabilities, compute expected costs, and run the CP-SAT constraint solver to find an optimal schedule. The validation layer tests the resulting schedule against baseline strategies using Monte Carlo simulation. The output layer presents the optimized schedule and cost comparison through a Streamlit dashboard. @fig-architecture shows how data flows between these layers.
 
-```{mermaid}
-%%| label: fig-architecture
-%%| fig-cap: "MaintAlign system architecture showing the data flow from user inputs through optimization and validation to final output."
-%%| fig-width: 6.5
-%%| fig-height: 5
-graph TD
-    A["Equipment Profiles"] --> D["Failure Modeling\n(Weibull + Kijima)"]
-    B["Production Chain"] --> F["CP-SAT Solver"]
-    C["Planning Settings"] --> F
-    D -- "failure probabilities" --> E["Cost Table Builder"]
-    E -- "expected cost per interval" --> F
-    F -- "optimized schedule" --> G["Monte Carlo Validation"]
-    H["Baseline Strategies\n(fixed-interval, run-to-failure)"] -- "comparison schedules" --> G
-    F -- "optimized schedule" --> I["Streamlit Dashboard"]
-    G -- "cost metrics" --> I
-```
+![MaintAlign system architecture showing the data flow from user inputs through optimization and validation to final output.](images/static.png){#fig-architecture width=80%}
 
 This separation means each component is testable on its own. The failure modeling layer produces cost tables without touching the solver. The solver finds the cheapest schedule without running simulations. If a component needs to be swapped — for example, replacing CP-SAT with a different solver — the rest of the system stays the same.
 
@@ -106,31 +91,7 @@ The opportunistic grouping component deserves extra explanation because it is on
 
 @fig-runtime shows the complete sequence of steps from user input through optimization to validated output.
 
-```{mermaid}
-%%| label: fig-runtime
-%%| fig-cap: "MaintAlign runtime flow from user input through optimization to validated output."
-%%| fig-width: 6
-%%| fig-height: 6
-flowchart TD
-    A(["User enters equipment\nparameters and settings"])
-    B["Load profiles and compute\nWeibull failure probabilities"]
-    C["Apply Kijima virtual age\nand build cost tables"]
-    D["Formulate and solve\nCP-SAT constraint model"]
-    E{"Solver finds\nfeasible solution?"}
-    F["Extract optimized\nmaintenance schedule"]
-    G["Report infeasibility\nand suggest relaxations"]
-    H["Validate schedule via\nMonte Carlo simulation"]
-    I(["Output: schedule and\ncost comparison"])
-
-    A --> B
-    B --> C
-    C --> D
-    D --> E
-    E -- "Yes" --> F
-    E -- "No" --> G
-    F --> H
-    H --> I
-```
+![MaintAlign system architecture showing the data flow from user inputs through optimization and validation to final output.](images/dynamic.png){#fig-architecture width=80%}
 
 If the solver cannot find a feasible solution — for example, if the downtime windows are too narrow to accommodate all required maintenance — MaintAlign reports the infeasibility and suggests which constraints might need to be relaxed. This prevents the system from silently producing a bad schedule.
 
