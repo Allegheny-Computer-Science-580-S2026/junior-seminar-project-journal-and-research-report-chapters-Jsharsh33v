@@ -9,34 +9,48 @@ description: "Experiences with brainstorming, prototyping, and presenting"
 
 ## Brainstorming and Prototyping Experience
 
-In this journal entry, reflect on your experiences with brainstorming your idea,
-developing your prototype, and presenting your work to others.
 
 ### Brainstorming Process
 
-- How did you generate and refine your research idea?
-- What techniques or approaches did you use for brainstorming?
-- How did your idea evolve from your initial concept?
-- What feedback did you receive and how did it shape your thinking?
+The idea for MaintAlign came from recognizing a gap in preventive maintenance scheduling. Most approaches use either simple time-based intervals or reactive strategies—neither accounts for production chain dependencies or resource constraints. Reading papers on Weibull failure modeling and constraint programming made me realize OR-Tools CP-SAT could formulate this as a 0/1 knapsack problem with cumulative constraints.
+
+My approach mixed literature review with technical sketching and regular conversations with Professor Kapfhammer. Rather than just reading theory, I sketched production chains on paper and worked through examples by hand. Professor Kapfhammer's role was critical—he questioned my assumptions in ways that forced clarity. When I wanted to include technician skill levels, he asked me to justify the trade-off. These questions weren't criticism; they were discipline that kept my scope tight and purposeful.
+
+The idea evolved significantly through prototyping. My initial plan was straightforward: predict failures using Weibull distributions, feed to CP-SAT, get optimal schedule. But as I built, I discovered production chain cascading failures needed explicit constraints. When I found a Weibull sampling bug (machines had negative failure times), it forced me to deeply understand the Kijima imperfect maintenance model, which led to the Option C insight: technician skill should affect the Weibull age reset.
+
+Feedback from Professor Kapfhammer and the CMPSC 580 demo shaped my thinking. Two questions stuck with me: "Why CP-SAT instead of Gurobi?" (forced me to consider hybrid approaches) and "How do you validate Weibull assumptions?" (exposed a methodology gap). Classmates' confusion about why production chains matter made me realize I needed to explain cascading failures more clearly.
+
 
 ### Prototyping Experience
 
-- What was your approach to building the prototype?
-- What challenges did you encounter during development?
-- What successes or breakthroughs did you experience?
-- How did the actual prototype differ from your initial plans?
+I started with a principle: validate core logic before adding complexity. My first prototype was minimal—hard-coded test data, basic Weibull sampler, direct connection to CP-SAT solver. Only once the formulation was sound did I add parameterization, production chain representation, cost tracking, and visualization. I built extensive logging from the start so I could understand not just what decisions were made, but why.
+
+Testing strategy was critical. For each feature, I created synthetic test cases where I knew the correct answer. Only when simple cases worked did I test complex scenarios.
+
+Several challenges emerged. The Weibull sampling bug caused wildly unrealistic predictions; fixing it deepened my understanding of imperfect maintenance models. Cost accounting was subtly wrong—I was double-counting cascading losses until I implemented proper topological traversal. CP-SAT performance with large instances (50+ machines, 365-day horizons) remains a limitation that might require Gurobi as a complement. Parameter sensitivity is also challenging—Weibull shape and scale dramatically affect outcomes, but I lacked rigorous methodology for selecting them.
+
+Breakthroughs validated the approach. The 0/1 knapsack formulation worked cleanly. Production chain cascading constraints proved elegant and tractable. Simple baseline comparisons showed MaintAlign produces substantially better outcomes. Adding technician skill levels was simpler than expected and dramatically increased realism.
+
+The actual prototype differed from initial plans in good ways. I'd imagined a monolithic tool; it evolved into modular phases (sampling, constraint building, solving, analysis). Detailed logging and visualization emerged as essential. The tool became more focused on this specific problem rather than a general scheduler, which is actually a strength.
+
 
 ### Presentation Experience
 
-- How did you prepare for presenting your work?
-- What went well during the presentation?
-- What would you improve about your presentation?
-- What questions or feedback did you receive?
-- How did presenting your work help you understand it better?
+Preparing for the prototype demo, I created slides moving from motivation through formulation to results. I rehearsed extensively and prepared Q&A responses. The presentation went well—the motivation landed, formulation was clear, and the live demo made everything concrete. I felt confident during questions.
+
+Areas to improve: I spent too much time on background and not enough on what's novel about MaintAlign. My methodology slides were too dense; diagrams would help. I should address limitations upfront rather than treating them as afterthoughts—that actually strengthens credibility.
+
+Questions were thoughtful. "How does performance scale?" highlighted a real limitation. "Can you handle parameter uncertainty?" exposed gaps I need to address. "Why not use machine learning?" forced me to clarify why Weibull is better: it's interpretable and doesn't require massive datasets.
+
+Explaining the work out loud deepened my understanding. When I struggled to answer why cumulative constraints matter, I realized I'd just implemented what papers said without fully internalizing it. Afterwards, re-deriving constraints from first principles strengthened my grasp. I also realized audiences cared about practical impact rather than technical elegance, which should shift how I structure the final report.
+
 
 ### Lessons Learned
 
-- What did you learn about the research process?
-- What would you do differently next time?
-- How has this experience prepared you for future research projects?
-- What are your questions or concerns as you look towards writing your report's chapters?
+Implementation clarifies thinking in ways theory cannot. Bugs are learning opportunities. Building validation benchmarks early catches fundamental errors. Communication is itself research—explaining clearly improves the research itself.
+
+Next time, I'd spend more time on literature review before coding. I'd establish performance targets early. I'd document assumptions explicitly from day one and keep that documentation maintained.
+
+This experience prepared me well for future research. I understand how to structure projects so reporting feels natural: clear formulation, documented assumptions, incremental validation, intentional simplification. I've learned that technical depth and clear communication aren't opposing forces—good implementation naturally leads to good explanation. Professor Kapfhammer's emphasis on asking "why?" has become internalized.
+
+As I write the full report, I'm concerned about several things. Chapter 2 (Related Work) requires synthesizing Weibull scheduling, constraint programming, and production systems literature. The experimental setup will be complex but needs to stay rigorous. I need to decide whether Gurobi integration goes in Methods or Future Work. I have strong synthetic results but no real-world data—I'll address this honestly in Threats to Validity. Most importantly, I need to lock the feature set soon and focus on writing. The tool works, the concept is solid. It's time to tell the story.
