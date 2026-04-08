@@ -15,6 +15,58 @@
 %%%  }
 %%% ====================================================================
 
+@inproceedings{10.1145/3757940.3757968,
+author = {Zhang, Xinxin and Liu, Xiangguo and Suo, Yu and Yang, Mingshun},
+title = {Integrated optimization of equipment preventive maintenance considering production quality},
+year = {2025},
+isbn = {9798400714948},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3757940.3757968},
+doi = {10.1145/3757940.3757968},
+abstract = {Aiming at the problem of product quality deterioration caused by equipment deterioration in the process of production scheduling, this paper considers the coupling relationship between production equipment maintenance and product processing quality and production tasks and studies the integrated optimization problem of equipment preventive maintenance considering product quality. An integrated optimization model of equipment preventive maintenance considering product quality is established to minimize the cost of equipment maintenance and human resources, the cost of unqualified products, the cost of equipment shutdown and start-up, and the delay penalty of production tasks. An improved Harris eagle optimization algorithm is designed to solve the model. The superiority of the equipment preventive strategy considering product quality and the superiority of the algorithm is verified by comparative experiments.},
+booktitle = {Proceedings of the 2025 5th International Conference on Control and Intelligent Robotics},
+pages = {166–172},
+numpages = {7},
+keywords = {Harris eagle optimization algorithm, Preventive maintenance, Product quality},
+location = {
+},
+series = {ICCIR '25}
+}
+
+@inproceedings{10.5555/3643142.3643306,
+author = {Gutschi, Clemens and Furian, Nikolaus and Voessner, Siegfried},
+title = {Simulation-Based Evaluation of Imperfect Predictive Maintenance Models in Discrete Manufacturing: A Procedure Model and Case Study},
+year = {2024},
+isbn = {9798350369663},
+publisher = {IEEE Press},
+abstract = {The performance and reliability of production systems is greatly affected by sudden breakdowns. In order to avoid these unforeseen interruptions, predictive maintenance (PdM) systems are being widely used to predict failures and prevent outages by maintenance. The performance of PdM systems however depend heavily on precision and recall of prediction results. In the worst case, missing or false alarms can actually worsen the performance of an production system instead of improving it. We present a new procedural model which specifically focus on the imperfection of such PdM systems and estimate the impact of this unwanted property on the performance and economic aspects of a production system. The model is presented in all steps needed for implementation and evaluation and demonstrated in a realistic use case examining an interlinked production system with a simulation-based approach.},
+booktitle = {Proceedings of the Winter Simulation Conference},
+pages = {1984–1995},
+numpages = {12},
+location = {San Antonio, Texas, USA},
+series = {WSC '23}
+}
+
+@inproceedings{10.1145/3335550.3335552,
+author = {Zhao, Zhonghao and Xiao, Boping and Yan, Xianyuan},
+title = {Selective Maintenance Modeling for a Multi-state System Considering Functionally Significant Items},
+year = {2019},
+isbn = {9781450362641},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3335550.3335552},
+doi = {10.1145/3335550.3335552},
+abstract = {Selective maintenance problem arises in many large multi-state systems which are required to perform multiple missions in succession. Maintenance work can only be carried out in finite maintenance breaks between any two consecutive missions. Only a selected set of multi-state components can be taken maintenance action under limited resources such as time and cost. Traditional selective maintenance strategies do not consider Functionally Significant Items (FSI) and determine which components need to be maintained only by using maintenance resources and performance state. However, in an actual industrial environment, such as safety will also affect maintenance decisions. Therefore, it is necessary to fully consider various factors to determine FSI. In such a case, Analytic Hierarchy Process (AHP) is used to determine FSI in this paper, and then the multi-state system selective maintenance model considering FSI is established with the goal of maximizing the reliability to perform next mission. An improved genetic algorithm (GA) is employed to solve the optimization problem instead of enumeration. Finally, an example is presented to illustrate the necessity of considering FSI.},
+booktitle = {Proceedings of the 2019 International Conference on Management Science and Industrial Engineering},
+pages = {139–145},
+numpages = {7},
+keywords = {selective maintenance, multi-state system, genetic algorithm, Functionally Significant Items, Analytic Hierarchy Process},
+location = {Phuket, Thailand},
+series = {MSIE '19}
+}
+
+
 %%% Revision history:  see source in git
 
 ENTRY

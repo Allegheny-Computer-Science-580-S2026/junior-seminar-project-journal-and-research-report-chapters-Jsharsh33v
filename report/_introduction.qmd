@@ -1,47 +1,92 @@
 # Introduction
 
-This chapter describes your completed junior seminar research project,
-including the overall aims and the background motivating your research.
-Whenever possible, you should use one or more concrete examples and
-technical diagrams.
+Modern manufacturing systems depend on equipment that slowly degrades over time. Bearings wear out, motors overheat, belts loosen, and sensors drift away from their original calibration. When a single machine fails without warning, the damage is often larger than the cost of repairing that one machine. In a production chain, one upstream failure can stop every downstream step that depends on it, creating idle labor time, missed deadlines, and expensive production losses. Because of this, preventive maintenance is not just a technical task; it is also a scheduling and decision-making problem.
 
-**Note for Junior Seminar**: This chapter should be approximately 5-7
-pages in length. Focus on clearly articulating your research problem,
-your approach, and why it matters. You don't need to provide exhaustive
-detail - prioritize clarity and coherence over comprehensiveness.
+This project studies that decision problem through the design of **MaintAlign**, a preventive maintenance scheduling tool built with the Google OR-Tools CP-SAT solver and supported by simulation-based evaluation. At a high level, MaintAlign decides **which machines should be serviced and when**, while accounting for three realities that matter in actual factories: machines degrade at different rates, failures in one part of the line can affect other parts of the line, and maintenance activities can sometimes be grouped together to reduce disruption [@Winter2021; @Goponenko2024; @Zhang2025]. Rather than relying on fixed service intervals or purely reactive repair, the tool frames maintenance planning as a constrained optimization problem.
 
-It is often useful and necessary to separate the introduction into
-multiple sections. Several possible sections are proposed below, you
-can use these or distribute your introductory text into sections in
-another way.
-
-The headings below propose _one way_ you might structure this section
-of the document.
+This chapter introduces the problem that MaintAlign addresses, explains why that problem matters in both academic and practical terms, positions the project within the maintenance-optimization literature, and defines the main goals of the system. Because several parts of this topic are mathematically dense, the chapter first explains the ideas in plain language and then moves into the more technical concepts. The chapter closes with a discussion of ethical implications, especially worker safety, transparency, and the risks of over-relying on automated recommendations.
 
 ## Motivation
 
+Manufacturing facilities constantly balance two competing goals: keep machines running to maintain output, and stop machines early enough to avoid costly failures. Every preventive maintenance action creates short-term downtime, but delaying service can create much larger losses later. This trade-off becomes harder when many machines interact through shared production flow, limited maintenance capacity, and different degradation patterns.
+
+For a small workshop with only a few independent machines, experienced operators may be able to manage maintenance using simple rules of thumb. In a larger facility, however, manual planning becomes much less reliable. A planner may know that one machine is aging faster than another, but still struggle to compare the cost of servicing it today against the risk of letting it run for three more days. That difficulty grows when the planner must also consider downstream disruption, labor availability, and the possibility of servicing multiple machines during the same planned stoppage. In other words, preventive maintenance scheduling is not just a maintenance problem. It is a **combinatorial optimization problem**.
+
+This is one reason the topic has attracted sustained attention in operations research. Researchers have proposed age-based replacement rules, imperfect maintenance models, multi-component formulations, and more recent integrated optimization methods that connect maintenance decisions to production outcomes [@Zhao2019; @Gutschi2024; @Zhang2025]. At the same time, recent work on constraint programming and hybrid optimization shows that modern solvers can handle difficult industrial scheduling problems more effectively than older handcrafted procedures in many settings [@Winter2021; @Goponenko2024; @Lorenzi2025]. MaintAlign is motivated by the gap between these two worlds: rich theory exists, but many factories still rely on spreadsheets, fixed-interval policies, or informal expert judgment.
+
+The practical importance of this problem is easy to see. A poorly timed failure can interrupt production, delay shipments, and force managers into reactive repairs under time pressure. Fixed-interval schedules are simple to use, but they often service machines too early or too late because they ignore how different machines actually age. Reactive repair avoids unnecessary early maintenance, but it accepts the possibility of abrupt breakdowns and the cascading costs those failures can trigger. MaintAlign is built to offer a middle path: a transparent decision-support tool that uses formal optimization to recommend schedules while still allowing human operators to inspect and override the result.
+
 ## Current State of the Art
+
+The literature relevant to MaintAlign comes from two main directions. The first direction is the long tradition of maintenance and reliability modeling, which studies when a system should be repaired or replaced. The second direction is the optimization literature, especially constraint programming, which studies how to search large decision spaces efficiently under many interacting rules. MaintAlign sits at the intersection of these areas.
+
+### Classical Replacement Policies
+
+One of the foundational ideas in maintenance theory is the **age-replacement policy**. In its simplest form, a component is replaced either when it fails or when it reaches a chosen age threshold, whichever happens first. Barlow and Hunter's classic work helped establish this line of thinking by formalizing optimal preventive maintenance policies and showing how cost can be minimized over time [@BarlowHunter1960]. The basic intuition is simple: replacing too early wastes usable life, while replacing too late risks failure and its larger corrective cost.
+
+A closely related idea is **block replacement**, where maintenance happens at fixed calendar intervals whether or not the machine has recently been serviced. This is attractive in practice because it is easy to administer, but it can also waste value. For example, if a machine is repaired shortly before a scheduled block replacement, the next replacement may occur when the equipment has barely been used since the last service. These classical models are important because they define the core cost trade-off clearly. However, they are also limited because they usually treat a machine as a single isolated unit and often assume that maintenance restores it completely.
+
+That assumption is often unrealistic. In real factories, maintenance quality varies. Sometimes a repair is a full overhaul; other times it is only a partial fix that keeps the machine running but does not erase all prior wear. This limitation leads directly to imperfect maintenance models.
+
+### Imperfect Maintenance and Virtual Age
+
+Kijima's work on imperfect maintenance is especially important for this project because it gives a mathematically useful way to represent the fact that a repaired machine is not always “as good as new” [@Kijima1989]. The main concept is **virtual age**. Virtual age does not have to match the machine's calendar age. Instead, it describes the machine's effective condition after maintenance.
+
+A simple example makes this idea clearer. Suppose a machine has been operating long enough that, in terms of wear, it behaves like a 100-hour-old machine. If a very thorough overhaul restores most of its reliability, its virtual age after maintenance might drop to 20 hours. If the repair is only partial, its virtual age might drop only to 70 hours. The machine is still the same physical machine, but the model now captures the fact that different repairs change its future failure risk by different amounts.
+
+Kijima introduced two widely discussed virtual-age models. In **Type I**, maintenance reduces the age accumulated since the last repair. In **Type II**, maintenance reduces the total accumulated virtual age of the system [@Kijima1989; @Gutschi2024]. In plain terms, Type I is closer to fixing recent wear, while Type II is closer to a more comprehensive restoration. These models improved the realism of reliability theory, but many formulations still focus on individual equipment or on settings where system interactions remain limited. MaintAlign borrows the intuition of non-perfect restoration, but its main emphasis is different: it focuses on how degradation-informed maintenance choices interact with production-chain dependencies and scheduling constraints.
+
+### Weibull Failure Distributions in Reliability Engineering
+
+To make optimization useful, the model needs a practical way to describe how failure risk changes as equipment ages. For this reason, reliability engineering often uses the **Weibull distribution**, a flexible family of lifetime models originally introduced by Waloddi Weibull and still widely used in engineering analysis [@Weibull1951; @NISTWeibull].
+
+The key reason the Weibull distribution is useful is that its shape can represent several different types of failure behavior. With shape parameter $\beta < 1$, failure risk decreases over time, which is often used to describe early-life failures or “infant mortality.” With $\beta = 1$, the hazard rate is constant, which reduces to the exponential case. With $\beta > 1$, the hazard rate increases over time, which is especially relevant for wear-out behavior and therefore for preventive maintenance planning [@NISTWeibull].
+
+This idea is easier to understand with a concrete example. Imagine two machines, each with the same current maintenance cost, but different degradation patterns:
+
+- Machine A has $\beta = 1.0$, so its failure risk is roughly constant over time.
+- Machine B has $\beta = 2.5$, so its failure risk rises as it ages.
+
+If both machines are the same age today, it may still be more urgent to service Machine B, because delaying maintenance on that machine causes expected failure cost to rise much faster. In other words, the Weibull model helps convert the vague statement “this machine is getting old” into a more precise estimate of how much extra risk is created by waiting.
+
+Formally, the Weibull hazard function is
+
+$$
+h(t) = \frac{\beta}{\eta} \left(\frac{t}{\eta}\right)^{\beta - 1},
+$$
+
+where $\beta$ is the shape parameter and $\eta$ is the scale parameter. MaintAlign does not ask the CP-SAT solver to compute this expression during the search itself. Instead, it uses a preprocessing step to generate expected failure-cost tables from each machine's Weibull parameters. These tables map each machine age to an expected cost value. That design matters because the CP-SAT solver works most naturally with discrete, integer-based decision structure, not with expensive floating-point probability calculations inside the combinatorial search [@GoogleORTools; @Winter2021].
+
+This preprocessing choice is one of the most important implementation decisions in the project. It keeps the optimization model computationally manageable while preserving the main reliability insight: older machines with steeper wear-out curves should usually receive more urgent attention than machines whose failure risk is still relatively flat.
+
+### Constraint Programming and Industrial Scheduling
+
+Even with good degradation models, the scheduling problem remains difficult because many decisions interact. A maintenance action on one machine may create downtime that makes it economical to service another machine at the same time. An upstream failure may increase the effective cost of leaving a downstream-dependent machine unattended. Limited maintenance capacity may force the system to choose between two risky but incompatible actions.
+
+Constraint programming is useful in settings like this because it allows the modeler to encode many types of rules directly: timing restrictions, capacity limits, mutual exclusivity, grouping opportunities, and dependency logic. Google OR-Tools provides the CP-SAT solver specifically for this kind of integer-based constraint optimization, and Google recommends CP-SAT over the older original CP solver for most modern use cases [@GoogleORTools]. Recent research also shows strong performance of constraint-based and hybrid scheduling approaches across industrial domains, including manufacturing and high-performance computing environments [@Winter2021; @Goponenko2024; @Lorenzi2025].
+
+MaintAlign uses this optimization style not because it makes the problem simple, but because it provides a practical way to represent a messy real-world planning problem without reducing it to an unrealistic toy model. The solver does not replace engineering judgment; instead, it gives planners a structured way to explore a very large set of possible schedules.
 
 ## Goals of the Project
 
+MaintAlign is not intended to be just another abstract maintenance model. The project aims to build a usable optimization tool that translates reliability concepts into operational scheduling decisions. This emphasis on tool-building matters because many papers propose mathematically elegant policies that are difficult to implement in day-to-day industrial settings. MaintAlign tries to close that gap by combining a CP-SAT optimization core, Weibull-based cost preprocessing, production-chain reasoning, Monte Carlo validation, and a Streamlit interface for inspection and interpretation.
+
+More specifically, MaintAlign has five goals:
+
+- **Minimize total expected cost across interconnected equipment.** The system should recommend schedules that account for both maintenance cost and expected failure cost, including downstream production effects rather than only local machine-level losses.
+- **Represent machine degradation more realistically than fixed-interval rules.** By using Weibull-based expected-cost tables, the tool should distinguish between machines that age slowly and machines whose risk accelerates sharply with time.
+- **Model production dependencies directly.** The system should capture the fact that an upstream machine may be operationally more important than its standalone repair cost suggests because its failure can interrupt several later stages.
+- **Support opportunistic grouping of maintenance tasks.** If one stoppage creates a low-cost opportunity to service nearby or dependent equipment, the optimization model should be able to exploit that option when it reduces overall cost.
+- **Validate optimized schedules under uncertainty.** Because optimization outputs can look convincing even when modeling assumptions are weak, the project should test schedules through Monte Carlo simulation and compare them against simpler baselines such as fixed-interval and run-to-failure strategies.
+
+These goals also explain the sequencing of topics in this chapter. The discussion first established why maintenance timing matters, then introduced the literature on replacement and imperfect repair, and finally explained why Weibull modeling and constraint programming are the specific technical pieces chosen for this tool. Each section leads into the next because the project is built by combining these ideas rather than treating them as unrelated background topics.
+
 ## Ethical Implications
 
-This document requires that you discuss the ethical implications of your
-work -- no matter how benign you consider the outcome of your project.
-As several major studies of ethical issues in computer science assert:
-_no project is completely value-neutral_.
+Although MaintAlign is framed as an optimization tool, its ethical implications are significant because maintenance decisions affect people, not just machines. The most immediate ethical concern is worker safety. Unexpected equipment failures can create hazardous conditions for operators, maintenance staff, and nearby workers. A system that improves maintenance timing could therefore reduce real safety risk by lowering the chance of abrupt breakdowns.
 
-To assist you in elaborating on these issues, the following areas are
-topics you might consider addressing. You do not need to address all of
-them.
+There is also a second ethical side to automation: decision-support systems can encourage overconfidence. A schedule that looks mathematically optimal may still be unsafe if the input data are poor, the production topology is incomplete, or the model misses warning signs visible to experienced technicians. For example, vibration, overheating, or unusual noise may indicate that a machine needs service sooner than its estimated Weibull parameters suggest. For that reason, MaintAlign should be treated as a recommendation system, not an unquestionable authority.
 
-* Information Privacy
-* Information Accuracy (e.g. can contain reliability)
-* Potential Misuse (e.g. computer crime, unintended consequences)
-* Second- or Third-Party Risk (e.g. safety)
-* Data Collection Issues (e.g. issues inherent in collecting data)
-* Algorithmic or Data Bias
-* Potential Power Difference / Social Imbalance / Issues in Equity
+Data quality creates another ethical risk. If historical maintenance records are incomplete, then the estimated degradation parameters may be biased. Machines with more complete maintenance histories may appear easier to model and therefore receive better recommendations, while machines with sparse or noisy records may be systematically mischaracterized. In a production environment, that kind of bias does not stay abstract; it can shift risk toward particular teams, shifts, or parts of the facility.
 
-In addition, reflect on ways that the above harms can be or are
-mitigated by your work.
+MaintAlign addresses these concerns in several ways. First, the tool is designed to remain transparent: users can inspect parameters, costs, and recommended actions through the interface instead of receiving a single unexplained output. Second, the simulation layer acts as a check on overconfidence by testing schedules under stochastic scenarios rather than trusting the deterministic optimization result alone [@Gutschi2024]. Third, the project is open-source, which supports outside review of assumptions, implementation choices, and possible failure modes. These choices do not eliminate ethical risk, but they do make the system more accountable and easier to question.
