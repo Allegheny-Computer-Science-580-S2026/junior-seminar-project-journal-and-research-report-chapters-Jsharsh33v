@@ -28,7 +28,11 @@ author:
       postal-code: 16335
 
 abstract: |
-  A well-researched student project completed during the Junior Seminar.
+  Preventive maintenance scheduling in manufacturing systems is a combinatorial optimization problem: each machine ages at its own rate, breakdowns in upstream equipment cascade through production chains, and a fixed pool of technicians must be allocated across competing maintenance tasks. Most existing tools handle these factors in isolation --- using fixed-interval rules, condition-based heuristics, or single-machine analytical models --- and few combine reliability modeling with resource-constrained scheduling in a way that a non-specialist can actually use.
+
+  This report presents **MaintAlign**, a constraint-based preventive maintenance scheduling optimizer built on the Google OR-Tools CP-SAT solver. The system models per-machine failure risk through Weibull distributions and accounts for imperfect repair using the Kijima Type I virtual age formulation. Production chain dependencies and retooling costs are encoded directly in the constraint model so the solver can identify opportunistic groupings that share setup costs across nearby machines. Expected failure costs are precomputed into scaled integer tables to keep floating-point work out of the search loop. A Streamlit dashboard wraps the solver, ingesting machine data from CSV and rendering interactive Gantt charts, cost breakdowns, and Monte Carlo risk distributions.
+
+  Empirical evaluation across four problem sizes and three random seeds shows that CP-SAT-optimized schedules are 17.9% cheaper than the strongest baseline on the small instance and 23.5--25.4% cheaper on the medium and large instances. Monte Carlo simulation with 500 random failure draws per schedule confirms that these savings persist under stochastic failure scenarios, with the optimized schedules also showing lower VaR95 tail risk than every baseline tested. The solver returns provably optimal solutions in under three minutes for ten-machine instances and feasible solutions for instances up to twenty machines. The report discusses limitations including the use of synthetic data, a scale ceiling around ten machines for proven optimality, and the absence of real sensor integration, and outlines specific future work targeting these gaps.
 ---
 
 {{< include _introduction.qmd >}}

@@ -7,8 +7,8 @@ project:
 execute:
   freeze: auto
 author:
-  - name: A. Student
-    email: astudent@allegheny.edu
+  - name: Zhanybek Sharsheev
+    email: sharsheev01@allegheny.edu
 website:
   title: "Junior Seminar Research Journal"
   navbar:

@@ -1,4 +1,4 @@
-# Introduction
+# Introduction {#sec-introduction}
 
 Modern manufacturing systems depend on equipment that slowly degrades over time. Bearings wear out, motors overheat, belts loosen, and sensors drift away from their original calibration. When a single machine fails without warning, the damage is often larger than the cost of repairing that one machine. In a production chain, one upstream failure can stop every downstream step that depends on it, creating idle labor time, missed deadlines, and expensive production losses. Because of this, preventive maintenance is not just a technical task; it is also a scheduling and decision-making problem.
 
