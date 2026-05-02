@@ -7,18 +7,27 @@ description: "What is your research idea?"
 
 ![Research planning](../thumbnail.jpg)
 
-## What is your research idea?
+## What was your research idea?
 
-In this first journal entry, describe the problem you plan to investigate and
-your initial approach. Please answer the following questions:
+My research idea is to build a pricing simulation that shows how prices change over time based on supply, demand, and price elasticity. The main problem I want to address is that many economics models are taught using static graphs, which do not clearly show how prices adjust step by step in real markets.
 
-- What is the main problem or question you want to address?
-- Why is this problem important or interesting?
-- What is your initial approach to solving this problem?
-- What tools, technologies, or methods do you plan to use?
-- What do you hope to achieve or discover?
-- What is one published research paper in your area?
+This problem is important because students often understand the final equilibrium point but struggle to understand the process that leads to it. A dynamic simulation can help bridge the gap between theory and real-world market behavior by making price changes easier to visualize and experiment with.
 
-Remember to be specific and provide concrete examples where possible. This entry
-will serve as a foundation for your research project, so take time to think
-through your ideas carefully and to document this in this journal entry.
+My initial approach is to design a simple model where users can input supply, demand, and elasticity values and observe how prices adjust gradually over time instead of instantly reaching equilibrium. The simulation will focus on clarity and learning rather than perfect realism.
+
+I plan to use Python to implement the model and create a basic interactive interface for users. Graphs will be used to show price changes over time so that trends and adjustments are easy to see.
+
+Through this project, I hope to create an educational tool that helps students better understand core pricing concepts and gain intuition about how markets respond to changes in supply and demand.
+
+One relevant published research paper in this area is Marshall’s work on supply and demand, which provides foundational ideas about market equilibrium and price adjustment.
+
+
+## What is your research idea now?
+
+As I thought more deeply about the pricing simulation, I realized it felt more like building a teaching app than doing actual research with a meaningful contribution. I started reconsidering what problem genuinely interests me and what would constitute a real research contribution rather than just an educational tool.
+
+My current research idea is to build MaintAlign, a preventive maintenance scheduling optimization tool for production systems with resource constraints and production chain dependencies. The main problem I want to address is that most maintenance scheduling approaches use either simple time-based intervals or purely reactive strategies, neither of which accounts for production chain dependencies or limited resources. In real manufacturing, if Machine A fails, it might halt everything downstream, and you can't maintain all machines at once because you have limited technicians and downtime windows.
+
+My approach uses Weibull failure distribution models combined with constraint programming (OR-Tools CP-SAT solver) to find optimal maintenance schedules. I treat maintenance decisions as a 0/1 knapsack optimization problem where I'm balancing cost, failure risk, and resource constraints across an entire production chain. I'm building this in Python and will validate the approach against baseline strategies using synthetic data, with planned future work on real manufacturing data. The goal is to show that accounting for production dependencies and constraints produces significantly better outcomes than simple approaches.
+
+Through this project, I hope to demonstrate that constraint programming can solve real production scheduling problems and provide manufacturers with a practical tool that improves maintenance decisions. Relevant research includes Weibull failure modeling (Barlow & Hunter, Kijima), constraint programming optimization theory, and production systems management literature.

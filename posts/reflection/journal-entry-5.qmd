@@ -1,6 +1,6 @@
 ---
 title: "Journal Entry 5: Chapters 3 and 4 Reflections"
-date: "2026-04-01"
+date: "2026-04-17"
 categories: [reflection, writing, methodology, results]
 description: "Reflections on writing the Methodology and Results chapters"
 ---
@@ -16,39 +16,28 @@ results chapters of your junior seminar research report.
 
 #### Writing Process
 
-- How did you decide which implementation details to include?
-- What was challenging about describing your research methods?
-- How did you use diagrams or code snippets to enhance your explanations?
-- What technical depth was appropriate for your audience?
+Honestly deciding what to include was probably the hardest part. My system has a lot going on — CP-SAT formulation, Weibull failure modeling, production chain dependencies, cost tables — and I kept going back and forth on how deep to go. I eventually just asked myself "would someone be able to reimplement this from what I wrote?" and used that as my guide.
+Describing the methods was also harder than I thought it would be because I didn't actually build everything in a clean logical order. A lot of decisions came from trial and error, not planning. Writing it up as if it was intentional felt weird at first but I think that's just how methodology writing works.
+For diagrams I originally tried Mermaid in Quarto but it kept crashing GitHub Actions because of a headless Chromium timeout. I switched to static PNGs with matplotlib which actually worked out better because I had more control. Professor Kapfhammer's feedback also pushed me to write plain English introductions before any technical content, which I wasn't doing at first. That made a big difference in how readable the chapter is.
 
 #### Content Reflections
 
-- Does your methodology chapter clearly explain your approach?
-- Did you adequately describe the infrastructure and tools you used?
-- How well did you address ethical considerations in your methods?
-- Can you draw a diagram or formally outline an algorithm from your implementation?
-- What aspects of your implementation are you most proud of? Why?
+I think the chapter explains the approach well enough but there are definitely parts I could have gone deeper on — especially the production chain grouping logic. The idea is simple (if a machine in a chain is down the whole chain stops anyway, so you might as well group maintenance) but I'm not sure I explained it clearly enough for someone unfamiliar with the system.
+The part I'm most proud of is the cost modeling. Getting the solver to balance PM cost, expected failure cost, production loss, and retooling all in one objective and actually produce useful schedules — that took a while to get right and I think it's the most interesting technical part of the whole project.
 
 ### Chapter 4: Experimental Results
 
 #### Conducting and Reporting Experiments
 
-- How did you design your experiments to test your research questions?
-- What metrics did you use to evaluate your work?
-- What challenges did you face in collecting and analyzing data?
-- How did you decide which results to include in your report?
+I ran three experiments. First was scalability — just measuring how solve time grows as I go from 3 to 20 machines, with 3 random seeds per size. Second was comparing CP-SAT against four baseline strategies across different problem sizes. Third was Monte Carlo — running 500 simulations per configuration to see how each schedule holds up against random failures.
+The main things I measured were total cost, solve time, solver status, and for Monte Carlo the mean cost and VaR95 which is basically worst-case tail risk. The biggest challenge was that the 20-machine runs kept hitting the 180 second time limit without proving optimality. That was annoying to deal with but I just reported it honestly — those runs say FEASIBLE not OPTIMAL.
 
 #### Content Reflections
 
-- Do your results effectively demonstrate the value of your work?
-- How did you use visualizations to present your findings?
-- Did you discuss both successes and limitations of your approach?
-- What were the most interesting or unexpected results?
-- How well did you address threats to validity of the experiments?
+I think the results tell a clear story. The optimizer consistently beats the best baseline by 18–25% and the Monte Carlo results show lower mean cost and lower tail risk which is exactly what you want to see. I was actually surprised by how strong the condition-based baseline was — I expected analytical or max-interval to be the hardest to beat, so the savings over condition-based ended up meaning more than I initially thought.
+Professor Kapfhammer's feedback made me go back and soften some of my claims. I had written things like "scales optimally" which isn't accurate when the 20-machine runs are hitting the time limit. Changed those to be more careful.
 
 ### Overall Reflections
 
-- How do these chapters demonstrate the contribution of your research?
-- What did you learn about the scientific method through this process?
-- What revisions do you plan to make based on feedback?
-- How has writing these chapters changed your perspective on your research?
+Writing these two chapters made the project feel real in a way that just having working code didn't. Chapter 3 forced me to actually defend my design decisions and some of them I couldn't fully defend — that's basically where the limitations section came from. Chapter 4 forced me to be honest about what the experiments actually show versus what I wanted them to show.
+I also learned that reproducibility is genuinely hard. Getting everything to run cleanly across seeds and log to CSV and generate figures automatically is a lot of work that doesn't feel like "research" but is completely necessary. Based on feedback I'm planning to tighten the claims in Chapter 4 and improve how the three experiments connect so it reads as one argument instead of three separate things.

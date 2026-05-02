@@ -10,7 +10,7 @@ format:
 natbiboptions: numbers
 # EDIT AT YOUR OWN PERIL #
 
-title: Junior Seminar Research Report Title
+title: "MaintAlign: A Constraint-Based Tool for Preventive Maintenance Scheduling in Manufacturing Systems"
 
 firstreader: Professor Gregory M. Kapfhammer
 secondreader: Student Second Reader
@@ -18,7 +18,7 @@ secondreader: Student Second Reader
 bibliography: references.bib
 
 author:
-  - name: A. Student
+  - name: Zhanybek Sharsheev
     affiliation:
       name: Allegheny College
       address: 520 N. Main St., Box Q
@@ -28,90 +28,12 @@ author:
       postal-code: 16335
 
 abstract: |
-  A well-researched student project completed during the Junior Seminar.
+  Preventive maintenance scheduling in manufacturing systems is a combinatorial optimization problem: each machine ages at its own rate, breakdowns in upstream equipment cascade through production chains, and a fixed pool of technicians must be allocated across competing maintenance tasks. Most existing tools handle these factors in isolation --- using fixed-interval rules, condition-based heuristics, or single-machine analytical models --- and few combine reliability modeling with resource-constrained scheduling in a way that a non-specialist can actually use.
+
+  This report presents **MaintAlign**, a constraint-based preventive maintenance scheduling optimizer built on the Google OR-Tools CP-SAT solver. The system models per-machine failure risk through Weibull distributions and accounts for imperfect repair using the Kijima Type I virtual age formulation. Production chain dependencies and retooling costs are encoded directly in the constraint model so the solver can identify opportunistic groupings that share setup costs across nearby machines. Expected failure costs are precomputed into scaled integer tables to keep floating-point work out of the search loop. A Streamlit dashboard wraps the solver, ingesting machine data from CSV and rendering interactive Gantt charts, cost breakdowns, and Monte Carlo risk distributions.
+
+  Empirical evaluation across four problem sizes and three random seeds shows that CP-SAT-optimized schedules are 17.9% cheaper than the strongest baseline on the small instance and 23.5--25.4% cheaper on the medium and large instances. Monte Carlo simulation with 500 random failure draws per schedule confirms that these savings persist under stochastic failure scenarios, with the optimized schedules also showing lower VaR95 tail risk than every baseline tested. The solver returns provably optimal solutions in under three minutes for ten-machine instances and feasible solutions for instances up to twenty machines. The report discusses limitations including the use of synthetic data, a scale ceiling around ten machines for proven optimality, and the absence of real sensor integration, and outlines specific future work targeting these gaps.
 ---
-
-# Template description
-
-This repository contains the starter materials for your research report
-in the Junior Seminar course in Computer and Information Science. The
-main directory of this repository contains the Markdown template for a
-project designed for use with GitHub Classroom. To learn more about the
-course in which these assignments were completed, please refer to the
-`README.md` file.
-
-The template specifies various settings in the `_metadata.yml` file
-included in the repository. Change the appropriate values under the
-`Project-specific values` heading. Changing other values outside of that
-section may cause the project to fail to build. **Modify these values at
-your own risk.**
-
-Author your research report in the `index.qmd` document using appropriate
-Markdown hierarchy and syntax; GitHub Actions will automatically create a
-PDF from the relevant files. Consult the `README` of the repository to
-learn how to properly build and release this PDF.
-
-## Citations and references
-
-Including references throughout requires a specific pseudo-Markdown tag,
-demonstrated in the following blockquote. (Inspect the `index.qmd` file
-to see the format.)
-
-> A citation, when included correctly, will appear as it does at the end
-> of this sentence. [@plaat1996research]
-
-## Labeling figures
-
-To label a figure (i.e. an image), referencing the image using correct
-Markdown will automatically caption the figure:
-
-```markdown
-![Label](images/IMAGE_NAME.png)
-```
-
-## Labeling tables
-
-To provide a label for a table, write a short caption for the table and
-prefix the caption with `Table:` as in the example below:
-
-```
-Table: A two-row table demonstrating tables
-
-|Row number | Description |
-|:----------|:------------|
-|1          |Row 1        |
-|2          |Row 2        |
-```
-
-## Other template information
-
-Two things specific to this template to also keep in mind:
-
-1. It is your responsibility to remove this description section before building
-the PDF version you plan to submit for your final grade.
-2. References _will only appear if cited correctly_ in the text
-
-## Note on `LaTeX` commands
-
-Documents may include specific `LaTeX` commands _in Markdown_. To render
-these, surround the commands with markup denoting `LaTeX`. For example:
-
-```
-Checkmark character:   $\checkmark$
-Superscript character: $^{\dag}$
-```
-
-If using a special package not included in the template, add the desired
-`LaTeX` package or command/macro to the `header-includes` property in
-the YAML front matter.
-
-Should this package not be included in the environment shipped with this
-template, you may also need to add the package to the
-[GitHub Actions Workflow](.github/workflows/release.yml).
-
-Direct any questions about issues to Professor Gregory M. Kapfhammer.
-You can schedule an office hours appointment at:
-[https://www.gregorykapfhammer.com/schedule/](https://www.gregorykapfhammer.com/schedule/)
 
 {{< include _introduction.qmd >}}
 
