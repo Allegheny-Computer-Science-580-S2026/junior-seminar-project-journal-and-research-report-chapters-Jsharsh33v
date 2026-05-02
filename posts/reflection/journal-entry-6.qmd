@@ -9,52 +9,46 @@ description: "Reflection on writing the Conclusions and Future Work chapter"
 
 ## Reflection on Writing Chapter 5: Conclusions and Future Work
 
-In this journal entry, reflect on your experience writing the final chapter of
-your junior seminar research report.
+Chapter 5 was the chapter I was most nervous about going in. The previous four had clear jobs: introduce the problem, survey the literature, describe the method, present the results. Chapter 5 had no such fixed job. It had to summarize without repeating, propose future work without inventing things, and revisit the ethics section from Chapter 1 now that there were real numbers on the table.
 
 ### Writing the Conclusions
 
 #### Summarizing Your Research
 
-- How did you approach summarizing your research outcomes?
-- What were the key takeaways you wanted readers to understand?
-- How did you connect your conclusions back to your original research questions?
-- What was challenging about synthesizing all your work into a cohesive conclusion?
+My first instinct was to walk through the chapters in order and recap each one. After a paragraph of that I deleted everything and started again. A summary chapter should not read like a table of contents in prose form. The version I kept frames the research problem in a single sentence at the top of @sec-summary-results and then organizes the contributions into three categories: the constraint-based model, the empirical evidence, and the usable artifact. That structure forced me to decide what was actually new about MaintAlign rather than recounting every implementation detail.
+
+The takeaway I most wanted readers to leave with is that constraint programming, combined with Weibull-based cost preprocessing and opportunistic chain grouping, beats four reasonable baselines by 18 to 25 percent on synthetic instances up to ten machines. I tried to phrase that claim the same way every time it appears so a skim-reader cannot accidentally pull a stronger version out of it. The hardest synthesis question was how much weight to give the Streamlit dashboard. It is the piece least likely to appear in a maintenance optimization paper, but also the piece that made the Conference on Emerging Research presentation work. I kept it as a contribution but framed it carefully — the dashboard supported the research, it does not validate the science.
+
 
 #### Reflecting on Results
 
-- How well did your research meet your initial objectives?
-- What unexpected outcomes or insights emerged from this project?
-- How did you address limitations or shortcomings in your work?
-- What did you learn about your research topic through this process?
+The research met its initial objectives at the scales the experiments actually cover. The CP-SAT optimizer produced cheaper schedules than every baseline at every size tested, and Monte Carlo simulation confirmed that those savings hold up under random failures. The objective the project did not meet is industrial-scale performance. I had hoped the scalability experiment would show clean OPTIMAL results up to twenty machines; what it actually showed is that ten machines is the reliable ceiling, and that the third seed of the ten-machine instance returned FEASIBLE rather than OPTIMAL. Reporting that honestly was uncomfortable but it was the right call.
+
+The most unexpected outcome was how much the chain grouping mattered. When I first added the half-reified Boolean variables for opportunistic grouping, I assumed they were a small efficiency tweak. The cost breakdowns in @sec-results showed that grouping is responsible for a meaningful slice of the savings on chain-heavy instances. That changed how I described the contribution: chain grouping is not a detail of the formulation, it is one of the main reasons the formulation works.
+
 
 ### Proposing Future Work
 
 #### Identifying Next Steps
 
-- How did you identify areas for future research?
-- What limitations of your current work suggest future directions?
-- What new questions emerged from your research?
-- How realistic and specific are your proposed future work items?
+I tried to make future work emerge from the limitations rather than appear as a separate wishlist. The Gurobi head-to-head answers the "your baselines are not the strongest possible competitors" critique. The 25 / 50 / 100 machine scaling study answers the "ten machines is not industrial scale" critique. Dynamic rescheduling answers the implicit assumption that the schedule is computed once and followed. Each direction is paired with a concrete evaluation plan because I have read enough papers where future work is a list of vague aspirations and I did not want to write that. I also tried to be realistic about effort: the dashboard error handling is a few days, the Gurobi comparison is a summer project, the scaling study and multi-objective extension would each fill a senior thesis, and dynamic rescheduling is closer to a graduate project.
 
 #### Ethical Considerations
 
-- Did you address any unresolved ethical issues?
-- What new ethical concerns might future work introduce?
-- How might future research mitigate current limitations?
+The ethics section in Chapter 1 was written before any experiments were run, and it read more like a checklist than a real engagement with the issues. Rewriting it for Chapter 5 was different because by then there were concrete results to think about. The technician welfare point is a good example: in Chapter 1 I noted that the model treats technicians as an integer resource; in Chapter 5 I had to admit that the schedules the solver actually produces sometimes pack technicians tightly in ways that would be unacceptable in a real plant, and propose specific soft constraints to push back against that.
+
+The new concern that did not fit the original framing is input quality. A facility that supplies optimistic cost ratios will get schedules that skip valuable maintenance, and the solver will report those schedules as cheapest with apparent confidence. The mitigations I proposed — a sensitivity analysis script and a clearer FEASIBLE-versus-OPTIMAL signal on the dashboard — are small features individually, but together they nudge the default usage pattern away from blind trust.
 
 ### Overall Reflections
 
-- How does this chapter provide closure for your research report?
-- What did you learn about the iterative nature of research?
-- How has writing this chapter affected your perspective on your project?
-- What are you most satisfied with in this final chapter?
-- If you could revise anything in this chapter, what would it be?
+Chapter 5 provides closure mainly because it is the place where the report stops trying to add new claims and starts being careful about the ones already on the table. What I learned about the iterative nature of research is that most of the iteration happens at the writing stage, not the coding stage. The CP-SAT formulation went through three or four versions over the fall, but individual paragraphs in the report have been through more revisions than that. Each round of feedback from Professor Kapfhammer pushed me toward writing what the evidence actually supports rather than what I wished it supported.
+
+What I am most satisfied with is the limitations section. It would have been easier to bury the synthetic-data caveat in a single sentence and move on, and earlier in the project I might have done exactly that. If I could revise one thing, it would be the transition between the limitations section and the future work section. Right now they read as two separate discussions, when in fact each future work item maps almost one-to-one onto a limitation. A short paragraph at the top of @sec-future-work pointing back to the specific limitations being addressed would tighten the chapter.
 
 ### Looking Forward
 
-- How might you actually pursue some of the future work you proposed?
-- What skills or knowledge would you need to develop?
-- How has this research project prepared you for future research endeavors?
-- What are the next steps you should take as your prepare for your senior project?
-- What advice would you give to the next group of students in the junior seminar course?
+The future work item I am most likely to actually pursue is the scaling study at twenty-five, fifty, and one hundred machines. The infrastructure is mostly already in place: `generate_industrial` and `generate_factory` produce instances at those sizes, the experiment runner handles multiple seeds, and the figures pipeline already plots scalability data. What is missing is enough compute time and a clean comparison to a decomposition baseline, both tractable for a senior project. The skills I need to develop for that are mostly statistical rather than algorithmic — reporting variance honestly across ten or twenty seeds, distinguishing real performance differences from noise, and presenting solve-time distributions clearly.
+
+The next concrete step is the senior project planning conversation with Professor Kapfhammer. Beyond that, the immediate to-dos are the metadata file, the remaining journal entries, and a final tagged release of the report.
+
+For next year's juniors, my advice is that the writing is the project, not an afterthought. I spent the first half of the semester thinking the code was the work and the report would write itself once the experiments were done. That was wrong. The report took longer than the code, and the rounds of revision on the introduction and methodology taught me more about my own work than building the solver did. Start the report early, write the related work chapter while you are still reading the literature, and assume every paragraph will go through at least three revisions before it is honest enough to keep.

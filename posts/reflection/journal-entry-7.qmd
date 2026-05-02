@@ -1,6 +1,6 @@
 ---
 title: "Journal Entry 7: Overall Project Reflection"
-date: "2026-04-30"
+date: "2026-05-01"
 categories: [reflection, conclusion]
 description: "Overall reflection on the research project and next steps"
 ---
@@ -9,32 +9,40 @@ description: "Overall reflection on the research project and next steps"
 
 ## Overall Project Reflection
 
-In this final journal entry, reflect on your entire research project experience.
-In doing so, please consider the following questions:
+This final entry steps back from any single chapter or deliverable and looks at the project as a whole. MaintAlign started this semester as a vague idea about scheduling and ended as a working solver, a Streamlit dashboard, a five-chapter report, and a three-minute talk at the Conference on Emerging Research. The path between those two points was less linear than I expected.
 
 ### What did you learn?
 
-- What technical skills did you develop?
-- What research methods did you learn?
-- What did you learn about yourself as a researcher?
+The technical skills I developed are easiest to list. I learned constraint programming through Google's OR-Tools CP-SAT solver, including how to model optional interval variables, half-reified Booleans for conditional cost terms, and search strategies that exploit problem structure. I learned reliability modeling well enough to use Weibull distributions and Kijima Type I virtual age for imperfect repair, neither of which I had heard of before this project. I learned Monte Carlo simulation as a validation method, particularly the use of VaR95 to capture tail risk that mean cost alone hides. I picked up enough Streamlit to build a dashboard that survived a live demo, enough Quarto and LaTeX to produce a properly formatted academic report, and enough GitHub Actions to set up automated PDF builds and a CI workflow for the prototype.
+
+The research methods were less obvious to me at the start but turned out to matter more. Designing experiments that report variance across multiple seeds rather than a single number, choosing baselines that represent honest comparisons rather than easy wins, and reporting FEASIBLE results alongside OPTIMAL ones are all habits I did not have in the fall. I also learned how to do a literature review under a constraint — the ACM-only requirement forced me to read more carefully and accept that the related-work chapter would emphasize constraint-programming-for-scheduling rather than the broader maintenance optimization tradition.
+
+What I learned about myself as a researcher is that I overclaim by default and need explicit checks to push back against it. The first draft of every chapter overstated what the experiments showed. Without Professor Kapfhammer's feedback I would have left the report saying MaintAlign "scales optimally" rather than "scales to ten machines in under three minutes," and the difference between those two phrasings is the difference between a paper that is honest and one that is not. Knowing this about myself is useful because it means I can build the discipline into my workflow rather than relying on luck or external review to catch it.
 
 ### What challenges did you face?
 
-- What were the biggest obstacles you encountered?
-- How did you overcome these obstacles?
-- What would you do differently if you could start over?
+The biggest obstacle was the scalability ceiling at ten machines. I had hoped to push cleanly to twenty or beyond, and I spent a long time trying tighter bounds, search strategies, and symmetry breaking before accepting that the monolithic solver simply cannot handle larger instances inside a 180-second budget. The way I worked through it was to reframe the limitation as a finding rather than a failure: ten machines is the edge of what CP-SAT does well on this problem, and the decomposition module is a partial answer for larger sizes. That framing carried through into the limitations section of @sec-limitations and made the future work section more concrete.
+
+A second obstacle was the literature review constraint. Allegheny requires ACM Digital Library sources, and ACM's coverage of maintenance optimization is sparse compared to industrial engineering and reliability journals. I worked around it by leaning on ACM-published work in adjacent areas — constraint programming for scheduling, simulation-based validation — and by being explicit in the limitations section that the related-work chapter is narrower than a full survey would be.
+
+A third challenge was specific to the writing process. Drafts that came out smoothly often turned out to read like AI-generated prose: uniform paragraph structure, smooth connective transitions, balanced coverage of every angle. After several rounds of feedback I started rewriting transitional phrases in my own voice before submitting anything. The fix was not a one-time edit but a habit of reading drafts aloud and asking whether each sentence sounded like a sentence I would actually say.
+
+If I could start over, I would begin the report in the first weeks of the semester instead of treating it as a late-semester deliverable. The chapters that came out best — Chapter 4 in particular, written from real CSV data with the experiments fresh in mind — were the ones where the writing happened close to the work it described. The chapters that needed the most revision were the ones I tried to write retrospectively. I would also be more disciplined about scoping out features I cannot validate. The dashboard error handling, for example, was added late and is still incomplete; if I had committed to it earlier, it would be in the final release rather than in the future work section.
 
 ### What are you most proud of?
 
-- What accomplishments stand out?
-- What aspects of your work exceeded your expectations?
-- What contributions did your research make?
+The result I am most proud of is that the report tells a true story. The 18 to 25 percent savings figure is hedged with the synthetic-data caveat, the scalability claim is bounded at ten machines, and the comparison to the four baselines is honest about those baselines being non-adversarial. None of those qualifications were obvious to me in the fall, and the version of this report that I would have written without feedback would have been less honest and less useful.
+
+The Conference on Emerging Research presentation was the moment the project came together for me. Compressing a semester of work into three minutes for a non-specialist audience forced clarity I had not yet found in the longer form, and the questions I got afterward shaped how I framed the contributions in @sec-summary-results. The Streamlit dashboard mattered a lot here too. Without it, the talk would have been all equations and bar charts; with it, I could show a Gantt chart updating live as the solver ran.
+
+The contribution I think will hold up best is the chain grouping mechanism. The half-reified Boolean encoding is a small piece of the formulation, but the cost breakdowns showed that it is responsible for a meaningful share of the savings on chain-heavy instances. That is the kind of finding that another researcher could pick up and reuse, and it is the part of the project I would most want to defend if challenged.
 
 ### What are your next steps?
 
-- How will you build on this research in the future?
-- What questions remain unanswered?
-- How might you apply what you learned to future projects?
+The clearest next step is the senior project. The scaling study at twenty-five, fifty, and one hundred machines is the most tractable extension, since most of the infrastructure is already in place and the gap to fill is mostly compute time and a clean decomposition baseline. The Gurobi head-to-head is also high on my list and would be a strong companion to the scaling study, but it requires a license and a careful translation of the CP-SAT formulation into MIP form. I will discuss both options with Professor Kapfhammer during senior project planning.
 
-Use this entry to synthesize your experiences and articulate the value of the
-work you have completed throughout the semester.
+A parallel next step is the ECON-585 health economics framing, which reuses the MaintAlign machinery for medical equipment maintenance rather than industrial machines. The reliability framework transfers directly — a CT scanner has Weibull failure characteristics in the same way a CNC lathe does — but the cost structure is different, and the ethical considerations around safety-optimized equipment become more central. That extension is closer to a case study than new technical work, but it is a useful exercise in showing that the same model applies to a domain where the stakes are not measured in dollars alone.
+
+The questions that remain unanswered are mostly about the behavior of the solver beyond the regimes I tested. I do not know how the cost savings change with real industrial data, with adversarially-strong baselines, or at scales above twenty machines. Each of those is a separate research project in itself, and the report tries to be clear that answering any of them is future work rather than a settled result.
+
+Beyond this specific project, the lesson I will carry into future research is that the discipline of writing things down honestly is what turns a coding exercise into research. The solver was the easy part. Deciding what the solver actually showed, and saying so without overstating, was the hard part — and it is the part most worth doing well.
